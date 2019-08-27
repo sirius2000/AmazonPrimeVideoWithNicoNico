@@ -131,6 +131,8 @@ chrome.runtime.onMessage.addListener(
         AmazonNico.time.second = videoTime0.second + videoTime1.second;
         AmazonNico.time.nicoUnit = videoTime0.nicoUnit + videoTime1.nicoUnit;
 
+        console.log("get comments");
+
         ShowComment();
     }
 );
@@ -150,14 +152,14 @@ function ShowComment(){
 
     var videos = $("video");
     // 広告があるとvideoが2つある
-    var video = $(videos[videos.length - 1]);
+    var video = videos[videos.length - 1];
 
     if(!video){
         return;
     }
 
     // Amazon PrimeのvideoはなぜかcurrentTime=10から始まる
-    var nicoTime = ($("video")[0].currentTime - 10) * 100;
+    var nicoTime = (video.currentTime - 10) * 100;
 
     for(var i = 0;i < AmazonNico.comments.length;i++){
         AmazonNico.comments[i].SetPosition(nicoTime);
