@@ -86,6 +86,11 @@ class VideoComment{
         }
 
         var ctx = AmazonNico.ctx;
+
+        ctx.font = "48px 'ＭＳ ゴシック'";
+        ctx.strokeStyle = "#000";
+        ctx.fillStyle = this.color;
+
         var width = ctx.measureText(this.comment).width;
         var overlayWidth = AmazonNico.commentOverlay.innerWidth();
         var overlayHeight = AmazonNico.commentOverlay.innerHeight();
@@ -95,9 +100,6 @@ class VideoComment{
         var x = overlayWidth - (width + overlayWidth) * t;
         var y = this.topRate * overlayHeight;
 
-        AmazonNico.ctx.font = "48px 'ＭＳ ゴシック'";
-        AmazonNico.ctx.strokeStyle = "#000";
-        AmazonNico.ctx.fillStyle = this.color;
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
     }
