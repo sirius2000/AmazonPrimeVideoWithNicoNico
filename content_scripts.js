@@ -124,6 +124,10 @@ chrome.runtime.onMessage.addListener(
             AmazonNico.comments.push(new VideoComment(JSON.parse(request.comments[i])));
         }
 
+        AmazonNico.comments.sort((a, b) => {
+            return a.vpos - b.vpos;
+        });
+
         var videoTimes = $(".time").text().split(" / ");
         var videoTime0 = GetVideoTime(videoTimes[0]);
         var videoTime1 = GetVideoTime(videoTimes[1]);
