@@ -146,23 +146,16 @@ function ShowComment(){
     AmazonNico.canvas.height = overlayHeight;
     AmazonNico.ctx.clearRect(0, 0, overlayWidth, overlayHeight);
 
-    var timePercent = $(".bottomPanel .progressBarHandleWrapper").css("left");
-    var re = /([+-]?\d+(\.\d+)?)\%/
-    var rate;
+    var videos = $("video");
+    // 広告があるとvideoが2つある
+    var video = $(videos[videos.length - 1]);
 
-    if(timePercent.match(re)){
-        rate = parseFloat(timePercent.match(re)[1]) / 100;
-    }
-    else{
-        var barWidth = $(".bottomPanel .progressBar").innerWidth();
-
-        re = /([+-]?\d+(\.\d+)?)px/;
-        rate = parseFloat(timePercent.match(re)[1]) / barWidth;
+    if(!video){
+        return;
     }
 
-    var nicoTime = parseInt(rate * AmazonNico.time.nicoUnit);
-
-    console.log(rate);
+    // Amazon PrimeのvideoはなぜかcurrentTime=10から始まる
+    var nicoTime = ($("video")[0].currentTime - 10) * 100;
 
     for(var i = 0;i < AmazonNico.comments.length;i++){
         AmazonNico.comments[i].SetPosition(nicoTime);
