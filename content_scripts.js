@@ -40,7 +40,7 @@ class VideoComment{
     constructor(comment){
         this.comment = comment.text;
         this.vpos = parseInt(comment.vpos);
-        this.topRate = 0.1 + Math.random() * 0.9;
+        this.topRate = 0.1 + Math.random() * 0.8;
 
         if(comment.mail){
             var commands = comment.mail.split(" ");
