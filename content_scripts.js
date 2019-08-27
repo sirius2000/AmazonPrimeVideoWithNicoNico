@@ -49,6 +49,8 @@ class VideoComment{
         this.comment = comment.text;
         this.vpos = parseInt(comment.vpos);
         this.topRate = 0.1 + Math.random() * 0.8;
+        // 直前の表示位置[x, y]
+        this.prePosition = [null, null]
 
         if(comment.mail){
             var commands = comment.mail.split(" ");
@@ -120,6 +122,7 @@ class VideoComment{
     _SetBottomPosition(time){
         if(this.vpos > time ||
             this.vpos + COMMENT_CONFIG.BOTTOM_TIME < time){
+            this.prePosition = [null, null];
             return;
         }
 
@@ -134,12 +137,15 @@ class VideoComment{
         var overlayWidth = AmazonNico.commentOverlay.innerWidth();
         var overlayHeight = AmazonNico.commentOverlay.innerHeight();
         var x = overlayWidth / 2 - width / 2;
-        var y = overlayHeight - fontSize - AmazonNico.commentGroup.bottom.length * fontSize;
+        var y = this.prePosition[1] == null ?
+            overlayHeight - fontSize - AmazonNico.commentGroup.bottom.length * fontSize :
+            this.prePosition[1];
 
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
 
         AmazonNico.commentGroup.bottom.push(this);
+        this.prePosition = [x, y];
     }
 }
 
