@@ -19,8 +19,8 @@ let COLOR = {
 }
 
 let COMMENT_CONFIG = {
-    NORMAL_BEFORE_TIME: 200,
-    NORMAL_AFTER_TIME: 200
+    NORMAL_BEFORE_TIME: 100,
+    NORMAL_AFTER_TIME: 300
 }
 
 var AmazonNico = {
