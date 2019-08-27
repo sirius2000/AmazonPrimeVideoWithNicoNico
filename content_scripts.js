@@ -20,7 +20,9 @@ let COLOR = {
 
 let COMMENT_CONFIG = {
     NORMAL_BEFORE_TIME: 100,
-    NORMAL_AFTER_TIME: 300
+    NORMAL_AFTER_TIME: 300,
+    BOTTOM_TIME: 400,
+    FONT_SIZE: 48
 }
 
 var AmazonNico = {
@@ -33,7 +35,13 @@ var AmazonNico = {
         nicoUnit: 0
     },
     canvas: null,
-    ctx: null
+    ctx: null,
+    commentGroup: {
+        normal: [],
+        top: [],
+        middle: [],
+        bottom: []
+    }
 }
 
 class VideoComment{
@@ -77,7 +85,10 @@ class VideoComment{
         switch(this.posType){
             case POSSITION_TYPE.NORMAL:
                 this._SetNormalPosition(time);
-                break;s
+                break;
+            case POSSITION_TYPE.BOTTOM:
+                this._SetBottomPosition(time);
+                break;
         }
     }
 
@@ -104,6 +115,31 @@ class VideoComment{
 
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
+    }
+
+    _SetBottomPosition(time){
+        if(this.vpos > time ||
+            this.vpos + COMMENT_CONFIG.BOTTOM_TIME < time){
+            return;
+        }
+
+        var ctx = AmazonNico.ctx;
+        var fontSize = COMMENT_CONFIG.FONT_SIZE;
+
+        ctx.font = fontSize + "px 'ＭＳ ゴシック'";
+        ctx.strokeStyle = "#000";
+        ctx.fillStyle = this.color;
+
+        var width = ctx.measureText(this.comment).width;
+        var overlayWidth = AmazonNico.commentOverlay.innerWidth();
+        var overlayHeight = AmazonNico.commentOverlay.innerHeight();
+        var x = overlayWidth / 2 - width / 2;
+        var y = overlayHeight - fontSize - AmazonNico.commentGroup.bottom.length * fontSize;
+
+        ctx.strokeText(this.comment, x, y);
+        ctx.fillText(this.comment, x, y);
+
+        AmazonNico.commentGroup.bottom.push(this);
     }
 }
 
@@ -156,6 +192,8 @@ function ShowComment(){
     AmazonNico.canvas.height = overlayHeight;
     AmazonNico.ctx.clearRect(0, 0, overlayWidth, overlayHeight);
 
+    ClearCommentGroup();
+
     var videos = $("video");
     // 広告があるとvideoが2つある
     var video = videos[videos.length - 1];
@@ -170,6 +208,13 @@ function ShowComment(){
     for(var i = 0;i < AmazonNico.comments.length;i++){
         AmazonNico.comments[i].SetPosition(nicoTime);
     }
+}
+
+function ClearCommentGroup(){
+    AmazonNico.commentGroup.normal = [];
+    AmazonNico.commentGroup.top = [];
+    AmazonNico.commentGroup.middle = [];
+    AmazonNico.commentGroup.bottom = [];
 }
 
 function GetVideoTime(timeString){
