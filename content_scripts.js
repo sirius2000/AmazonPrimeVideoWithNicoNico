@@ -74,8 +74,10 @@ class VideoComment{
     }
 
     SetPosition(time){
-        if(this.posType == POSSITION_TYPE.NORMAL){
-            this._SetNormalPosition(time);
+        switch(this.posType){
+            case POSSITION_TYPE.NORMAL:
+                this._SetNormalPosition(time);
+                break;s
         }
     }
 
