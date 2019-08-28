@@ -94,9 +94,20 @@ class VideoComment{
         }
     }
 
+    IsDisplay(time){
+        switch(this.posType){
+            case POSSITION_TYPE.NORMAL:
+                return this.vpos - COMMENT_CONFIG.NORMAL_BEFORE_TIME <= time &&
+                    time <= this.vpos + COMMENT_CONFIG.NORMAL_AFTER_TIME;
+            case POSSITION_TYPE.BOTTOM:
+                return this.vpos <= time && this.vpos + COMMENT_CONFIG.BOTTOM_TIME;
+        }
+
+        return false;
+    }
+
     _SetNormalPosition(time){
-        if((this.vpos - COMMENT_CONFIG.NORMAL_BEFORE_TIME) > time ||
-            time > (this.vpos + COMMENT_CONFIG.NORMAL_AFTER_TIME)){
+        if(!this.IsDisplay(time)){
             return;
         }
 
@@ -120,8 +131,7 @@ class VideoComment{
     }
 
     _SetBottomPosition(time){
-        if(this.vpos > time ||
-            this.vpos + COMMENT_CONFIG.BOTTOM_TIME < time){
+        if(!this.IsDisplay(time)){
             this.prePosition = [null, null];
             return;
         }
