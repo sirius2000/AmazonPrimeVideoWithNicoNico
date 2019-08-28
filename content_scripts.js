@@ -1,8 +1,7 @@
 let POSSITION_TYPE = {
     TOP: 0,
-    MIDDLE: 1,
-    BOTTOM: 2,
-    NORMAL: 3
+    BOTTOM: 1,
+    NORMAL: 2
 }
 
 let COLOR = {
@@ -39,7 +38,6 @@ var AmazonNico = {
     commentGroup: {
         normal: [],
         top: [],
-        middle: [],
         bottom: []
     }
 }
@@ -59,7 +57,7 @@ class VideoComment{
                 this.posType = POSSITION_TYPE.BOTTOM;
             }
             else if(commands.indexOf("naka") >= 0){
-                this.posType = POSSITION_TYPE.MIDDLE;
+                this.posType = POSSITION_TYPE.NORMAL;
             }
             else if(commands.indexOf("ue") >= 0){
                 this.posType = POSSITION_TYPE.TOP;
@@ -229,7 +227,6 @@ function ShowComment(){
 function ClearCommentGroup(){
     AmazonNico.commentGroup.normal = [];
     AmazonNico.commentGroup.top = [];
-    AmazonNico.commentGroup.middle = [];
     AmazonNico.commentGroup.bottom = [];
 }
 
