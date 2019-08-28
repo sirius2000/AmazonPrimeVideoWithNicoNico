@@ -6,7 +6,7 @@ var comments = [];
 function GetVideoInfo(){
     videoId = $("#video_id").val();
 
-    GetVideoInfoWithURL("http://flapi.nicovideo.jp/api/getflv/" + videoId);
+    GetVideoInfoFromVideoPage(videoId);
 
     setTimeout(() => {
         if(videoInfo["thread_id"]){
@@ -84,6 +84,28 @@ function GetComment(){
     }
 
     xhr.send(postXml);
+}
+
+function GetVideoInfoFromVideoPage(videoId){
+    var url = "https://www.nicovideo.jp/watch/" + videoId;
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("GET", url, true);
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState == 4){
+            var parser = new DOMParser();
+            var dom = parser.parseFromString(xhr.responseText, "text/html");
+            var watchData = dom.getElementById("js-initial-watch-data");
+            var apiDataString = watchData.getAttribute("data-api-data");
+            var apiData = JSON.parse(apiDataString);
+
+            videoInfo["user_id"] = apiData.viewer.id;
+            videoInfo["thread_id"] = apiData.commentComposite.threads.filter((th)=>{
+                return th.isActive && th.isDefaultPostTarget;
+            })[0].id;
+        }
+    }
+    xhr.send();
 }
 
 $("#ok_button").click(GetVideoInfo);
