@@ -21,7 +21,8 @@ let COMMENT_CONFIG = {
     NORMAL_BEFORE_TIME: 100,
     NORMAL_AFTER_TIME: 300,
     BOTTOM_TIME: 400,
-    FONT_SIZE: 48
+    FONT_SIZE: 48,
+    ROW_COUNT: 10
 }
 
 var AmazonNico = {
@@ -47,8 +48,6 @@ class VideoComment{
         this.comment = comment.text;
         this.vpos = parseInt(comment.vpos);
         this.topRate = 0.1 + Math.random() * 0.8;
-        // 直前の表示位置[x, y]
-        this.prePosition = [null, null]
 
         if(comment.mail){
             var commands = comment.mail.split(" ");
@@ -131,6 +130,7 @@ class VideoComment{
     _DisplayBottom(time){
         if(!this.IsDisplay(time)){
             this.prePosition = [null, null];
+            this._DropGroup(AmazonNico.commentGroup.bottom);
             return;
         }
 
@@ -144,16 +144,42 @@ class VideoComment{
         var width = ctx.measureText(this.comment).width;
         var overlayWidth = AmazonNico.commentOverlay.innerWidth();
         var overlayHeight = AmazonNico.commentOverlay.innerHeight();
+        var row = this._InsertGroup(AmazonNico.commentGroup.bottom);
         var x = overlayWidth / 2 - width / 2;
-        var y = this.prePosition[1] == null ?
-            overlayHeight - fontSize - AmazonNico.commentGroup.bottom.length * fontSize :
-            this.prePosition[1];
+        var y = overlayHeight - fontSize - row * fontSize;
 
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
+    }
 
-        AmazonNico.commentGroup.bottom.push(this);
-        this.prePosition = [x, y];
+    _InsertGroup(group){
+        var index = group.indexOf(this);
+
+        if(index >= 0){
+            return index % COMMENT_CONFIG.ROW_COUNT;
+        }
+
+        var i;
+        for(i = 0;i < group.length;i++){
+            if(group[i] == null){
+                group[i] = this;
+                return i % COMMENT_CONFIG.ROW_COUNT;
+            }
+        }
+
+        group.push(this);
+
+        return i % COMMENT_CONFIG.ROW_COUNT;
+    }
+
+    _DropGroup(group){
+        var index = group.indexOf(this);
+
+        if(index < 0){
+            return;
+        }
+
+        group[index] = null;
     }
 }
 
@@ -206,8 +232,6 @@ function ShowComment(){
     AmazonNico.canvas.height = overlayHeight;
     AmazonNico.ctx.clearRect(0, 0, overlayWidth, overlayHeight);
 
-    ClearCommentGroup();
-
     var videos = $("video");
     // 広告があるとvideoが2つある
     var video = videos[videos.length - 1];
@@ -222,12 +246,6 @@ function ShowComment(){
     for(var i = 0;i < AmazonNico.comments.length;i++){
         AmazonNico.comments[i].Display(nicoTime);
     }
-}
-
-function ClearCommentGroup(){
-    AmazonNico.commentGroup.normal = [];
-    AmazonNico.commentGroup.top = [];
-    AmazonNico.commentGroup.bottom = [];
 }
 
 function GetVideoTime(timeString){
