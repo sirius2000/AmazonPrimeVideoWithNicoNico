@@ -98,7 +98,7 @@ class VideoComment{
                 return this.vpos - COMMENT_CONFIG.NORMAL_BEFORE_TIME <= time &&
                     time <= this.vpos + COMMENT_CONFIG.NORMAL_AFTER_TIME;
             case POSSITION_TYPE.BOTTOM:
-                return this.vpos <= time && this.vpos + COMMENT_CONFIG.BOTTOM_TIME;
+                return this.vpos <= time && time <=this.vpos + COMMENT_CONFIG.BOTTOM_TIME;
         }
 
         return false;
