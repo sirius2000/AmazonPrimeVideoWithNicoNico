@@ -1,10 +1,11 @@
 
-var videoId = "so35377363";
-
+var videoId = "";
 var videoInfo = { };
 var comments = [];
 
 function GetVideoInfo(){
+    videoId = $("#video_id").val();
+
     GetVideoInfoWithURL("http://flapi.nicovideo.jp/api/getflv/" + videoId);
 
     setTimeout(() => {
