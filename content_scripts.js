@@ -20,7 +20,8 @@ let COLOR = {
 let COMMENT_CONFIG = {
     NORMAL_BEFORE_TIME: 100,
     NORMAL_AFTER_TIME: 300,
-    BOTTOM_TIME: 400,
+    BOTTOM_TIME: 300,
+    TOP_TIME: 300,
     FONT_SIZE: 48,
     ROW_COUNT: 10
 }
@@ -88,6 +89,9 @@ class VideoComment{
             case POSSITION_TYPE.BOTTOM:
                 this._DisplayBottom(time);
                 break;
+            case POSSITION_TYPE.TOP:
+                this._DisplayTop(time);
+                break;
         }
     }
 
@@ -98,6 +102,8 @@ class VideoComment{
                     time <= this.vpos + COMMENT_CONFIG.NORMAL_AFTER_TIME;
             case POSSITION_TYPE.BOTTOM:
                 return this.vpos <= time && time <=this.vpos + COMMENT_CONFIG.BOTTOM_TIME;
+            case POSSITION_TYPE.TOP:
+                return this.vpos <= time && time <=this.vpos + COMMENT_CONFIG.TOP_TIME;
         }
 
         return false;
@@ -147,6 +153,29 @@ class VideoComment{
         var row = this._InsertGroup(AmazonNico.commentGroup.bottom);
         var x = overlayWidth / 2 - width / 2;
         var y = overlayHeight - fontSize - row * fontSize;
+
+        ctx.strokeText(this.comment, x, y);
+        ctx.fillText(this.comment, x, y);
+    }
+
+    _DisplayTop(time){
+        if(!this.IsDisplay(time)){
+            this._DropGroup(AmazonNico.commentGroup.top);
+            return;
+        }
+
+        var ctx = AmazonNico.ctx;
+        var fontSize = COMMENT_CONFIG.FONT_SIZE;
+
+        ctx.font = fontSize + "px 'ＭＳ ゴシック'";
+        ctx.strokeStyle = "#000";
+        ctx.fillStyle = this.color;
+
+        var width = ctx.measureText(this.comment).width;
+        var overlayWidth = AmazonNico.commentOverlay.innerWidth();
+        var row = this._InsertGroup(AmazonNico.commentGroup.top);
+        var x = overlayWidth / 2 - width / 2;
+        var y = fontSize + row * fontSize;
 
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
