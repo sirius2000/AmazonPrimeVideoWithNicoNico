@@ -83,13 +83,13 @@ class VideoComment{
         }
     }
 
-    SetPosition(time){
+    Display(time){
         switch(this.posType){
             case POSSITION_TYPE.NORMAL:
-                this._SetNormalPosition(time);
+                this._DisplayNormal(time);
                 break;
             case POSSITION_TYPE.BOTTOM:
-                this._SetBottomPosition(time);
+                this._DisplayBottom(time);
                 break;
         }
     }
@@ -106,7 +106,7 @@ class VideoComment{
         return false;
     }
 
-    _SetNormalPosition(time){
+    _DisplayNormal(time){
         if(!this.IsDisplay(time)){
             return;
         }
@@ -130,7 +130,7 @@ class VideoComment{
         ctx.fillText(this.comment, x, y);
     }
 
-    _SetBottomPosition(time){
+    _DisplayBottom(time){
         if(!this.IsDisplay(time)){
             this.prePosition = [null, null];
             return;
@@ -222,7 +222,7 @@ function ShowComment(){
     var nicoTime = (video.currentTime - 10) * 100;
 
     for(var i = 0;i < AmazonNico.comments.length;i++){
-        AmazonNico.comments[i].SetPosition(nicoTime);
+        AmazonNico.comments[i].Display(nicoTime);
     }
 }
 
