@@ -48,7 +48,7 @@ class VideoComment{
     constructor(comment){
         this.comment = comment.text;
         this.vpos = parseInt(comment.vpos);
-        this.topRate = 0.1 + Math.random() * 0.8;
+        this.position = [null, null];
 
         if(comment.mail){
             var commands = comment.mail.split(" ");
@@ -111,6 +111,7 @@ class VideoComment{
 
     _DisplayNormal(time){
         if(!this.IsDisplay(time)){
+            this._DropNormalGroup();
             return;
         }
 
@@ -122,15 +123,17 @@ class VideoComment{
 
         var width = ctx.measureText(this.comment).width;
         var overlayWidth = AmazonNico.commentOverlay.innerWidth();
-        var overlayHeight = AmazonNico.commentOverlay.innerHeight();
         var min = this.vpos - COMMENT_CONFIG.NORMAL_BEFORE_TIME;
         var max = this.vpos + COMMENT_CONFIG.NORMAL_AFTER_TIME;
         var t = (time - min) / (max - min);
+        var row = this._InsertNormalGroup();
         var x = overlayWidth - (width + overlayWidth) * t;
-        var y = this.topRate * overlayHeight;
+        var y =  COMMENT_CONFIG.FONT_SIZE * (1 + row);
 
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
+
+        this.position = [x, y];
     }
 
     _DisplayBottom(time){
@@ -156,6 +159,8 @@ class VideoComment{
 
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
+
+        this.position = [x, y];
     }
 
     _DisplayTop(time){
@@ -179,6 +184,63 @@ class VideoComment{
 
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
+
+        this.position = [x, y];
+    }
+
+    _InsertNormalGroup(){
+        var group = AmazonNico.commentGroup.normal;
+        var ctx = AmazonNico.ctx;
+        var overlayWidth = AmazonNico.commentOverlay.innerWidth();
+        var overlayWidthHalf = overlayWidth / 2.0;
+
+        for(var r = 0;r < group.length;r++){
+            var index = group[r].indexOf(this);
+
+            if(index >= 0){
+                return r;
+            }
+        }
+
+        for(var r = 0;r < group.length;r++){
+            if(group[r].length == 0){
+                group[r].push(this);
+                return r;
+            }
+
+            var tail = group[r][group[r].length - 1];
+            ctx.font = COMMENT_CONFIG.FONT_SIZE + "px 'ＭＳ ゴシック'";
+            var tailWidth = ctx.measureText(tail.comment).width;
+
+            if(tail.position[0] < overlayWidthHalf - tailWidth / 2.0){
+                group[r].push(this);
+                return r;
+            }
+        }
+
+        var min = group[0].length;
+        var tempR = 0;
+        for(var r = 1;r < group.length;r++){
+            if(group[r].length < min){
+                min = group[r].length;
+                tempR = r;
+            }
+        }
+
+        group[tempR].push(this);
+        return tempR;
+    }
+
+    _DropNormalGroup(){
+        var group = AmazonNico.commentGroup.normal;
+
+        for(var r = 0;r < group.length;r++){
+            var index = group[r].indexOf(this);
+
+            if(index >= 0){
+                group[r].splice(index, 1);
+            }
+        }
     }
 
     _InsertGroup(group){
@@ -244,9 +306,16 @@ chrome.runtime.onMessage.addListener(
 
         console.log("get comments");
 
+        InitializeCommentGroup();
         ShowComment();
     }
 );
+
+function InitializeCommentGroup(){
+    for(var i = 0;i < COMMENT_CONFIG.ROW_COUNT;i++){
+        AmazonNico.commentGroup.normal.push([]);
+    }
+}
 
 function ShowComment(){
     if(!AmazonNico.commentOverlay){
