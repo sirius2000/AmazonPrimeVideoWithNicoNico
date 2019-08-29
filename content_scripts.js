@@ -35,13 +35,17 @@ var AmazonNico = {
         second: 0,
         nicoUnit: 0
     },
-    canvas: null,
+    canvas: {
+        width: 0,
+        height: 0
+    },
     ctx: null,
     commentGroup: {
         normal: [],
         top: [],
         bottom: []
-    }
+    },
+    video: null
 }
 
 class VideoComment{
@@ -122,7 +126,7 @@ class VideoComment{
         ctx.fillStyle = this.color;
 
         var width = ctx.measureText(this.comment).width;
-        var overlayWidth = AmazonNico.commentOverlay.innerWidth();
+        var overlayWidth = AmazonNico.canvas.width;
         var min = this.vpos - COMMENT_CONFIG.NORMAL_BEFORE_TIME;
         var max = this.vpos + COMMENT_CONFIG.NORMAL_AFTER_TIME;
         var t = (time - min) / (max - min);
@@ -151,8 +155,8 @@ class VideoComment{
         ctx.fillStyle = this.color;
 
         var width = ctx.measureText(this.comment).width;
-        var overlayWidth = AmazonNico.commentOverlay.innerWidth();
-        var overlayHeight = AmazonNico.commentOverlay.innerHeight();
+        var overlayWidth = AmazonNico.canvas.width;
+        var overlayHeight = AmazonNico.canvas.height;
         var row = this._InsertGroup(AmazonNico.commentGroup.bottom);
         var x = overlayWidth / 2 - width / 2;
         var y = overlayHeight - fontSize - row * fontSize;
@@ -177,7 +181,7 @@ class VideoComment{
         ctx.fillStyle = this.color;
 
         var width = ctx.measureText(this.comment).width;
-        var overlayWidth = AmazonNico.commentOverlay.innerWidth();
+        var overlayWidth = AmazonNico.canvas.width;
         var row = this._InsertGroup(AmazonNico.commentGroup.top);
         var x = overlayWidth / 2 - width / 2;
         var y = fontSize + row * fontSize;
@@ -191,7 +195,7 @@ class VideoComment{
     _InsertNormalGroup(){
         var group = AmazonNico.commentGroup.normal;
         var ctx = AmazonNico.ctx;
-        var overlayWidth = AmazonNico.commentOverlay.innerWidth();
+        var overlayWidth = AmazonNico.canvas.width;
         var overlayWidthHalf = overlayWidth / 2.0;
 
         for(var r = 0;r < group.length;r++){
@@ -287,6 +291,10 @@ chrome.runtime.onMessage.addListener(
         AmazonNico.canvas = overlay;
         AmazonNico.ctx = overlay.getContext('2d');
 
+        var videos = $("video");
+        // 広告があるとvideoが2つある
+        AmazonNico.video = videos[videos.length - 1];
+
         for(var i = 0;i < request.comments.length; i++){
             AmazonNico.comments.push(new VideoComment(JSON.parse(request.comments[i])));
         }
@@ -330,16 +338,12 @@ function ShowComment(){
     AmazonNico.canvas.height = overlayHeight;
     AmazonNico.ctx.clearRect(0, 0, overlayWidth, overlayHeight);
 
-    var videos = $("video");
-    // 広告があるとvideoが2つある
-    var video = videos[videos.length - 1];
-
-    if(!video){
+    if(!AmazonNico.video){
         return;
     }
 
     // Amazon PrimeのvideoはなぜかcurrentTime=10から始まる
-    var nicoTime = (video.currentTime - 10) * 100;
+    var nicoTime = (AmazonNico.video.currentTime - 10) * 100;
 
     for(var i = 0;i < AmazonNico.comments.length;i++){
         AmazonNico.comments[i].Display(nicoTime);
