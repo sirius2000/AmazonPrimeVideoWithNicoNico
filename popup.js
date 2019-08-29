@@ -21,7 +21,7 @@ function GetVideoInfo(){
             }
         }, 10),
         setInterval(() => {
-            if(videoInfo["threadkey"]){
+            if(videoInfo["threadkey"] && videoInfo["waybackkey"]){
                 clearInterval(intervals[2]);
                 GetComment();
             }
@@ -50,12 +50,17 @@ function GetVideoInfoWithURL(url){
     xhr.send();
 }
 
-function GetComment(){
+function GetComment(time){
+    var isNew = !!!time;
+    time = isNew ? new Date().getTime() / 1000 : time;
+
     var postXml ='<thread thread="' + videoInfo["thread_id"] + '" ' +
         'version="20090904" ' +
         'res_from="1000" ' +
         'user_id="' + videoInfo["user_id"] + '" ' + 
         'threadkey="' + videoInfo["threadkey"] + '" ' +
+        'when="' + time + '" ' +
+        'waybackkey="' + videoInfo["waybackkey"] + '" ' +
         'force_184="1"/>';
 
     var xhr = new XMLHttpRequest();
@@ -67,6 +72,7 @@ function GetComment(){
             var dom = parser.parseFromString(xhr.responseText, "text/xml");
             var chats = dom.getElementsByTagName("chat");
             var comments = [];
+            var minDate = parseInt(chats[0].attributes["date"].value);
 
             for(var i = 0;i < chats.length;i++){
                 var mail = chats[i].attributes["mail"] ? chats[i].attributes["mail"].value : null;
@@ -75,17 +81,24 @@ function GetComment(){
                     "text": $(chats[i]).text(),
                     "mail": mail
                 };
+                var date = parseInt(chats[i].attributes["date"].value);
 
                 comments.push(JSON.stringify(comment));
+                minDate = date < minDate ? date : minDate;
             }
 
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {
-                    "type": "new",
+                    "type": isNew ? "new" : "add",
                     "comments": comments,
                 }, null);
                 console.log("send comments");
             });
+
+            // 過去ログを遡る
+            if(chats.length == 1000){
+                GetComment(minDate - 1);
+            }
         }
     }
 

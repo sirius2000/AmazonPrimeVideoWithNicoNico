@@ -284,6 +284,9 @@ chrome.runtime.onMessage.addListener(
             case "new":
                 NewComment(request);
                 break;
+            case "add":
+                AddComment(request);
+                break;
         }
     }
 );
@@ -327,6 +330,14 @@ function NewComment(request){
 
     InitializeCommentGroup();
     ShowComment();
+}
+
+function AddComment(request){
+    for(var i = 0;i < request.comments.length; i++){
+        AmazonNico.comments.push(new VideoComment(JSON.parse(request.comments[i])));
+    }
+
+    console.log("add comment");
 }
 
 function InitializeCommentGroup(){
