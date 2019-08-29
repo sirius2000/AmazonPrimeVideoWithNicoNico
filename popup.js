@@ -8,21 +8,20 @@ function GetVideoInfo(){
 
     GetVideoInfoFromVideoPage(videoId);
 
-    var interval1, interval2;
-
-    interval1 = setInterval(() => {
-        if(videoInfo["thread_id"]){
-            clearInterval(interval1);
-            GetVideoInfoWithURL("http://flapi.nicovideo.jp/api/getthreadkey?thread=" + videoInfo["thread_id"]);
-        }
-    }, 10);
-
-    interval2 = setInterval(() => {
-        if(videoInfo["threadkey"]){
-            clearInterval(interval2);
-            GetComment();
-        }
-    }, 10);
+    var intervals = [
+        setInterval(() => {
+            if(videoInfo["thread_id"]){
+                clearInterval(intervals[0]);
+                GetVideoInfoWithURL("http://flapi.nicovideo.jp/api/getthreadkey?thread=" + videoInfo["thread_id"]);
+                }
+        }, 10),
+        setInterval(() => {
+            if(videoInfo["threadkey"]){
+                clearInterval(intervals[1]);
+                GetComment();
+            }
+        }, 10)
+    ];
 }
 
 function GetVideoInfoWithURL(url){
