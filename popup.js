@@ -13,11 +13,17 @@ function GetVideoInfo(){
             if(videoInfo["thread_id"]){
                 clearInterval(intervals[0]);
                 GetVideoInfoWithURL("http://flapi.nicovideo.jp/api/getthreadkey?thread=" + videoInfo["thread_id"]);
-                }
+            }
+        }, 10),
+        setInterval(() => {
+            if(videoInfo["thread_id"]){
+                clearInterval(intervals[1]);
+                GetVideoInfoWithURL("http://flapi.nicovideo.jp/api/getwaybackkey?thread=" + videoInfo["thread_id"]);
+            }
         }, 10),
         setInterval(() => {
             if(videoInfo["threadkey"]){
-                clearInterval(intervals[1]);
+                clearInterval(intervals[2]);
                 GetComment();
             }
         }, 10)
