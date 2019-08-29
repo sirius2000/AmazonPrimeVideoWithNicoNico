@@ -75,7 +75,10 @@ function GetComment(){
             }
 
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {"comments": comments}, null);
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    "type": "new",
+                    "comments": comments,
+                }, null);
                 console.log("send comments");
             });
         }

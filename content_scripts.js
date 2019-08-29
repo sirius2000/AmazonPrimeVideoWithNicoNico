@@ -280,44 +280,52 @@ class VideoComment{
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse){
-        AmazonNico.comments = [];
-
-        if(!AmazonNico.commentOverlay){
-            AmazonNico.commentOverlay = $("<canvas>").attr('id', 'comment_overlay');
-            $(".overlaysContainer").append(AmazonNico.commentOverlay);
+        switch(request.type){
+            case "new":
+                NewComment(request);
+                break;
         }
-
-        var overlay = document.getElementById('comment_overlay');
-        AmazonNico.canvas = overlay;
-        AmazonNico.ctx = overlay.getContext('2d');
-
-        var videos = $("video");
-        // 広告があるとvideoが2つある
-        AmazonNico.video = videos[videos.length - 1];
-
-        for(var i = 0;i < request.comments.length; i++){
-            AmazonNico.comments.push(new VideoComment(JSON.parse(request.comments[i])));
-        }
-
-        AmazonNico.comments.sort((a, b) => {
-            return a.vpos - b.vpos;
-        });
-
-        var videoTimes = $(".time").text().split(" / ");
-        var videoTime0 = GetVideoTime(videoTimes[0]);
-        var videoTime1 = GetVideoTime(videoTimes[1]);
-
-        AmazonNico.time.hour = videoTime0.hour + videoTime1.hour;
-        AmazonNico.time.minute = videoTime0.minute + videoTime1.minute;
-        AmazonNico.time.second = videoTime0.second + videoTime1.second;
-        AmazonNico.time.nicoUnit = videoTime0.nicoUnit + videoTime1.nicoUnit;
-
-        console.log("get comments");
-
-        InitializeCommentGroup();
-        ShowComment();
     }
 );
+
+function NewComment(request){
+    AmazonNico.comments = [];
+
+    if(!AmazonNico.commentOverlay){
+        AmazonNico.commentOverlay = $("<canvas>").attr('id', 'comment_overlay');
+        $(".overlaysContainer").append(AmazonNico.commentOverlay);
+    }
+
+    var overlay = document.getElementById('comment_overlay');
+    AmazonNico.canvas = overlay;
+    AmazonNico.ctx = overlay.getContext('2d');
+
+    var videos = $("video");
+    // 広告があるとvideoが2つある
+    AmazonNico.video = videos[videos.length - 1];
+
+    for(var i = 0;i < request.comments.length; i++){
+        AmazonNico.comments.push(new VideoComment(JSON.parse(request.comments[i])));
+    }
+
+    AmazonNico.comments.sort((a, b) => {
+        return a.vpos - b.vpos;
+    });
+
+    var videoTimes = $(".time").text().split(" / ");
+    var videoTime0 = GetVideoTime(videoTimes[0]);
+    var videoTime1 = GetVideoTime(videoTimes[1]);
+
+    AmazonNico.time.hour = videoTime0.hour + videoTime1.hour;
+    AmazonNico.time.minute = videoTime0.minute + videoTime1.minute;
+    AmazonNico.time.second = videoTime0.second + videoTime1.second;
+    AmazonNico.time.nicoUnit = videoTime0.nicoUnit + videoTime1.nicoUnit;
+
+    console.log("get comments");
+
+    InitializeCommentGroup();
+    ShowComment();
+}
 
 function InitializeCommentGroup(){
     for(var i = 0;i < COMMENT_CONFIG.ROW_COUNT;i++){
