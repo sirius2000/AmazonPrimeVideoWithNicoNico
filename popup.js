@@ -1,7 +1,6 @@
 
 var videoId = "";
 var videoInfo = { };
-var comments = [];
 
 function GetVideoInfo(){
     videoId = $("#video_id").val();
@@ -67,6 +66,7 @@ function GetComment(){
             var parser = new DOMParser();
             var dom = parser.parseFromString(xhr.responseText, "text/xml");
             var chats = dom.getElementsByTagName("chat");
+            var comments = [];
 
             for(var i = 0;i < chats.length;i++){
                 var mail = chats[i].attributes["mail"] ? chats[i].attributes["mail"].value : null;

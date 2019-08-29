@@ -331,6 +331,9 @@ function NewComment(request){
 }
 
 function InitializeCommentGroup(){
+    AmazonNico.commentGroup.normal = [];
+    AmazonNico.commentGroup.top = [];
+    AmazonNico.commentGroup.bottom = [];
     for(var i = 0;i < COMMENT_CONFIG.ROW_COUNT;i++){
         AmazonNico.commentGroup.normal.push([]);
     }
@@ -341,7 +344,7 @@ function ShowComment(){
         return;
     }
 
-    requestAnimationFrame(ShowComment);
+    AmazonNico.animationId = requestAnimationFrame(ShowComment);
 
     var overlayWidth = AmazonNico.commentOverlay.innerWidth();
     var overlayHeight = AmazonNico.commentOverlay.innerHeight();
