@@ -1,6 +1,9 @@
 
 var videoId = "";
 var videoInfo = { };
+var commentCount = 0;
+
+let COMMENT_LIMIT = 5000;
 
 function GetVideoInfo(){
     videoId = $("#video_id").val();
@@ -97,8 +100,10 @@ function GetComment(time){
                 console.log("send comments");
             });
 
+            commentCount = isNew ? comments.length : commentCount + comments.length;
+
             // 過去ログを遡る
-            if(chats.length == 1000){
+            if(commentCount < COMMENT_LIMIT && chats.length == 1000){
                 GetComment(minDate - 1);
             }
         }
