@@ -143,7 +143,6 @@ class VideoComment{
 
     _DisplayBottom(time){
         if(!this.IsDisplay(time)){
-            this.prePosition = [null, null];
             this._DropGroup(AmazonNico.commentGroup.bottom);
             return;
         }
