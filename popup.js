@@ -4,6 +4,7 @@ var videoInfo = { };
 
 function GetVideoInfo(){
     videoId = $("#video_id").val();
+    videoInfo["isUserVideo"] = !!videoId.match("^sm")
 
     GetVideoInfoFromVideoPage(videoId);
 
@@ -21,7 +22,8 @@ function GetVideoInfo(){
             }
         }, 10),
         setInterval(() => {
-            if(videoInfo["threadkey"] && videoInfo["waybackkey"]){
+            if((videoInfo["isUserVideo"] || videoInfo["threadkey"]) &&
+                videoInfo["waybackkey"]){
                 clearInterval(intervals[2]);
                 GetComment();
             }
