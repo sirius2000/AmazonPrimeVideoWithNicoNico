@@ -45,7 +45,8 @@ var AmazonNico = {
         top: [],
         bottom: []
     },
-    video: null
+    video: null,
+    animationId: 0
 };
 
 class VideoComment{
@@ -322,6 +323,8 @@ function NewComment(request){
     AmazonNico.time.nicoUnit = videoTime0.nicoUnit + videoTime1.nicoUnit;
 
     console.log("get comments");
+
+    cancelAnimationFrame(AmazonNico.animationId);
 
     InitializeCommentGroup();
     ShowComment();
