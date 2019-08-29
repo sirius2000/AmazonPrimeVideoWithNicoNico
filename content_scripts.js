@@ -2,7 +2,7 @@ let POSSITION_TYPE = {
     TOP: 0,
     BOTTOM: 1,
     NORMAL: 2
-}
+};
 
 let COLOR = {
     white: "#fff",
@@ -15,7 +15,7 @@ let COLOR = {
     blue: "#00f",
     purple: "#c000ff",
     black: "#000"
-}
+};
 
 let COMMENT_CONFIG = {
     NORMAL_BEFORE_TIME: 100,
@@ -24,7 +24,7 @@ let COMMENT_CONFIG = {
     TOP_TIME: 300,
     FONT_SIZE: 48,
     ROW_COUNT: 10
-}
+};
 
 var AmazonNico = {
     comments: [],
@@ -46,7 +46,7 @@ var AmazonNico = {
         bottom: []
     },
     video: null
-}
+};
 
 class VideoComment{
     constructor(comment){
@@ -384,8 +384,4 @@ function GetNicoUnitTime(hour, minute, second){
     return hour * 60 * 60 * 100 +
         minute * 60 * 100 +
         second * 100;
-}
-
-function ShowNormalComment(){
-
 }
