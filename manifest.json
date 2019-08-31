@@ -7,7 +7,7 @@
         "32": "icon_32.png"
     },
     "content_scripts": [{
-        "matches": ["https://www.amazon.co.jp/gp/video/detail/*" ],
+        "matches": ["https://www.amazon.co.jp/*" ],
         "js": ["jquery-3.4.1.min.js", "content_scripts.js"],
         "css": ["content_scripts.css"]
     }],
