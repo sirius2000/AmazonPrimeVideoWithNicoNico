@@ -27,6 +27,10 @@ open /Applications/Google\ Chrome.app/ --args --disable-web-security --user-data
 1. デベロッパーモードを有効にします。
 1. 「パッケージ化されていない拡張機能を読み込む」からダウンロードしたソースコードのフォルダを選択します。
 
-### 4. Amazon Primeの動画にコメントを表示する
+### 4. ニコニコ動画にログインする
+ニコニコ動画にログインしていなければ、ログインします。  
+https://account.nicovideo.jp/login
+
+### 5. Amazon Primeの動画にコメントを表示する
 使い方は下記動画を参照してください。  
 https://www.nicovideo.jp/watch/sm35618213
