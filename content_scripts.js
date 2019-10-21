@@ -17,12 +17,13 @@ let COLOR = {
     black: "#000"
 };
 
-let COMMENT_CONFIG = {
+var COMMENT_CONFIG = {
     NORMAL_BEFORE_TIME: 100,
     NORMAL_AFTER_TIME: 300,
     BOTTOM_TIME: 300,
     TOP_TIME: 300,
-    FONT_SIZE: 48,
+    FONT_SIZE_RATE: 0.08, // スクリーンサイズ（幅と高さの大きいほう)に対しての比
+    FONT_SIZE_PX: 48, // 実際のフォントサイズ
     ROW_COUNT: 10
 };
 
@@ -121,8 +122,9 @@ class VideoComment{
         }
 
         var ctx = AmazonNico.ctx;
+        var fontSize = COMMENT_CONFIG.FONT_SIZE_PX
 
-        ctx.font = "48px 'ＭＳ ゴシック'";
+        ctx.font = fontSize + "px 'ＭＳ ゴシック'";
         ctx.strokeStyle = "#000";
         ctx.fillStyle = this.color;
 
@@ -133,7 +135,7 @@ class VideoComment{
         var t = (time - min) / (max - min);
         var row = this._InsertNormalGroup();
         var x = overlayWidth - (width + overlayWidth) * t;
-        var y =  COMMENT_CONFIG.FONT_SIZE * (1 + row);
+        var y =  fontSize * (1 + row);
 
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
@@ -148,7 +150,7 @@ class VideoComment{
         }
 
         var ctx = AmazonNico.ctx;
-        var fontSize = COMMENT_CONFIG.FONT_SIZE;
+        var fontSize = COMMENT_CONFIG.FONT_SIZE_PX;
 
         ctx.font = fontSize + "px 'ＭＳ ゴシック'";
         ctx.strokeStyle = "#000";
@@ -174,7 +176,7 @@ class VideoComment{
         }
 
         var ctx = AmazonNico.ctx;
-        var fontSize = COMMENT_CONFIG.FONT_SIZE;
+        var fontSize = COMMENT_CONFIG.FONT_SIZE_PX;
 
         ctx.font = fontSize + "px 'ＭＳ ゴシック'";
         ctx.strokeStyle = "#000";
@@ -361,6 +363,8 @@ function ShowComment(){
     AmazonNico.canvas.width = overlayWidth;
     AmazonNico.canvas.height = overlayHeight;
     AmazonNico.ctx.clearRect(0, 0, overlayWidth, overlayHeight);
+    COMMENT_CONFIG.FONT_SIZE_PX = Min(overlayWidth, overlayHeight) * COMMENT_CONFIG.FONT_SIZE_RATE;
+    console.log(COMMENT_CONFIG.FONT_SIZE_PX);
 
     if(!AmazonNico.video){
         return;
@@ -408,4 +412,20 @@ function GetNicoUnitTime(hour, minute, second){
     return hour * 60 * 60 * 100 +
         minute * 60 * 100 +
         second * 100;
+}
+
+function Min(){
+    if(!arguments.length){
+        return null;
+    }
+
+    var res = arguments[0];
+
+    for(var i = 1; i < arguments.length; i++){
+        if(arguments[i] < res){
+            res = arguments[i];
+        }
+    }
+
+    return res;
 }
