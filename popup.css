@@ -1,0 +1,21 @@
+#tabs{
+    width: 100%;
+}
+
+.tab{
+    width: 50%;
+    height: 50px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.tab:nth-child(1){
+    background-image: url("./img/niconico_icon_black.png");
+    float: left;
+}
+
+.tab:nth-child(2){
+    background-image: url("./img/setting_icon_black.png");
+    float: right;
+}
