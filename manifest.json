@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "AmazonPrimeWithNicoNico",
     "description": "アマゾンプライムの動画をニコニコのコメントと一緒に見れる拡張機能です。",
-    "version": "1.0",
+    "version": "1.1",
     "icons": {
         "32": "icon_32.png"
     },
