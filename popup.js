@@ -1,9 +1,6 @@
 
 var videoId = "";
 var videoInfo = { };
-var commentCount = 0;
-
-let COMMENT_LIMIT = 5000;
 
 function GetVideoInfo(){
     videoId = $("#video_id").val();
@@ -57,40 +54,38 @@ function GetVideoInfoWithURL(url){
 
 function GetComment(time){
     var isNew = !!!time;
-    time = isNew ? new Date().getTime() / 1000 : time;
+    time = isNew ? parseInt(new Date().getTime() / 1000) : time;
 
-    var postXml ='<thread thread="' + videoInfo["thread_id"] + '" ' +
-        'version="20090904" ' +
-        'res_from="1000" ' +
-        'user_id="' + videoInfo["user_id"] + '" ' + 
-        'threadkey="' + videoInfo["threadkey"] + '" ' +
-        'when="' + time + '" ' +
-        'waybackkey="' + videoInfo["waybackkey"] + '" ' +
-        'force_184="1"/>';
+    var postJson = MakePostJSON(videoInfo["threads"], time);
 
     var xhr = new XMLHttpRequest();
 
-    xhr.open("POST", "http://nmsg.nicovideo.jp/api/", true);
+    xhr.open("POST", "http://nmsg.nicovideo.jp/api.json/", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
-            var parser = new DOMParser();
-            var dom = parser.parseFromString(xhr.responseText, "text/xml");
-            var chats = dom.getElementsByTagName("chat");
+            var res = JSON.parse(xhr.responseText);
             var comments = [];
-            var minDate = parseInt(chats[0].attributes["date"].value);
+            var minDate = null;
 
-            for(var i = 0;i < chats.length;i++){
-                var mail = chats[i].attributes["mail"] ? chats[i].attributes["mail"].value : null;
-                var comment = {
-                    "vpos": chats[i].attributes["vpos"].value,
-                    "text": $(chats[i]).text(),
-                    "mail": mail
-                };
-                var date = parseInt(chats[i].attributes["date"].value);
+            res.forEach((content) => {
+                if(content.chat){
+                    var chat = content.chat;
 
-                comments.push(JSON.stringify(comment));
-                minDate = date < minDate ? date : minDate;
-            }
+                    if(chat.deleted){
+                        return;
+                    }
+
+                    var comment = {
+                        "vpos": chat.vpos,
+                        "text": chat.content,
+                        "mail": chat.mail ? chat.mail : null
+                    }
+                    var date = chat.date;
+
+                    comments.push(JSON.stringify(comment));
+                    minDate = (minDate == null || date < minDate) ? date : minDate;
+                }
+            });
 
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {
@@ -99,17 +94,10 @@ function GetComment(time){
                 }, null);
                 console.log("send comments");
             });
-
-            commentCount = isNew ? comments.length : commentCount + comments.length;
-
-            // 過去ログを遡る
-            if(commentCount < COMMENT_LIMIT && chats.length == 1000){
-                GetComment(minDate - 1);
-            }
         }
     }
 
-    xhr.send(postXml);
+    xhr.send(postJson);
 }
 
 function GetVideoInfoFromVideoPage(videoId){
@@ -125,13 +113,97 @@ function GetVideoInfoFromVideoPage(videoId){
             var apiDataString = watchData.getAttribute("data-api-data");
             var apiData = JSON.parse(apiDataString);
 
+            // 分単位の動画時間（秒は切り上げ）
+            videoInfo["video_duration"] = Math.ceil(apiData.video.duration / 60);
             videoInfo["user_id"] = apiData.viewer.id;
             videoInfo["thread_id"] = apiData.commentComposite.threads.filter((th)=>{
                 return th.isActive && th.isDefaultPostTarget;
             })[0].id;
+
+            videoInfo["threads"] = apiData.commentComposite.threads;
         }
     }
     xhr.send();
+}
+
+function MakePostJSON(threads, when){
+    var res = [MakePingObject("rs:0")];
+    var i = 0;
+
+    threads.forEach((thread) => {
+        if(!thread.isActive){
+            return;
+        }
+
+        res.push(MakePingObject("ps:" + i));
+        res.push(MakeThreadObject(thread, when));
+        res.push(MakePingObject("pf:" + i));
+        i++;
+        if(thread.isLeafRequired){
+            res.push(MakePingObject("ps:" + i));
+            res.push(MaekThreadLeavesObject(thread, when));
+            res.push(MakePingObject("pf:" + i));
+            i++;
+        }
+    });
+
+    res.push(MakePingObject("rf:0"));
+
+    return JSON.stringify(res);
+}
+
+function MakePingObject(content){
+    return {
+        "ping": {
+            "content": content
+        }
+    };
+}
+
+function MakeThreadObject(thread, when){
+    var res = {
+        "thread": {
+            "thread": thread.id,
+            "version": "20090904",
+            "language": 0,
+            "user_id": videoInfo["user_id"],
+            "when": when,
+            "with_global": 1,
+            "scores": 1,
+            "nicoru": 3,
+            "force_184": "1",
+            "fork": thread.fork,
+            "waybackkey": videoInfo["waybackkey"]
+        }
+    };
+
+    if(thread.isDefaultPostTarget){
+        res.thread.threadkey = videoInfo["threadkey"];
+    }
+
+    return res;
+}
+
+function MaekThreadLeavesObject(thread, when){
+    var res  = {
+        "thread_leaves": {
+            "thread": thread.id,
+            "language": 0,
+            "user_id": videoInfo["user_id"],
+            "when": when,
+            "content": "0-" + videoInfo["video_duration"] + ":100,1000,nicoru:100",
+            "scores": 1,
+            "nicoru": 3,
+            "force_184": "1",
+            "waybackkey": videoInfo["waybackkey"]
+        }
+    };
+
+    if(thread.isDefaultPostTarget){
+        res.thread_leaves.threadkey = videoInfo["threadkey"];
+    }
+
+    return res;
 }
 
 $("#ok_button").click(GetVideoInfo);
