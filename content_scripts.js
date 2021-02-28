@@ -23,7 +23,7 @@ var COMMENT_CONFIG = {
     BOTTOM_TIME: 300,
     TOP_TIME: 300,
     FONT_SIZE_RATE: 0.08, // スクリーンサイズ（幅と高さの大きいほう)に対しての比
-    FONT_SIZE_PX: 48, // 実際のフォントサイズ
+    FONT_SIZE_PX: 50, // 実際のフォントサイズ
     ROW_COUNT: 10
 };
 
@@ -122,11 +122,16 @@ class VideoComment{
         }
 
         var ctx = AmazonNico.ctx;
-        var fontSize = COMMENT_CONFIG.FONT_SIZE_PX
+        var fontSize = COMMENT_CONFIG.FONT_SIZE_PX;
 
         ctx.font = fontSize + "px 'ＭＳ ゴシック'";
         ctx.strokeStyle = "#000";
         ctx.fillStyle = this.color;
+
+        ctx.shadowColor = "#ccc"; //灰色の影を付ける
+        ctx.shadowBlur  = 0;      //ぼかしを０にする
+        ctx.shadowOffsetX = 3;    //横に3pxずらす
+        ctx.shadowOffsetY = 1;    //縦に1pxずらす
 
         var width = ctx.measureText(this.comment).width;
         var overlayWidth = AmazonNico.canvas.width;
@@ -139,6 +144,8 @@ class VideoComment{
 
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
+        
+        ctx.globalAlpha = 0.7;
 
         this.position = [x, y];
     }
@@ -156,6 +163,11 @@ class VideoComment{
         ctx.strokeStyle = "#000";
         ctx.fillStyle = this.color;
 
+        ctx.shadowColor = "#ccc"; //灰色の影を付ける
+        ctx.shadowBlur  = 0;      //ぼかしを０にする
+        ctx.shadowOffsetX = 3;    //横に3pxずらす
+        ctx.shadowOffsetY = 1;    //縦に1pxずらす
+
         var width = ctx.measureText(this.comment).width;
         var overlayWidth = AmazonNico.canvas.width;
         var overlayHeight = AmazonNico.canvas.height;
@@ -165,6 +177,8 @@ class VideoComment{
 
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
+
+        ctx.globalAlpha = 0.7;
 
         this.position = [x, y];
     }
@@ -182,6 +196,11 @@ class VideoComment{
         ctx.strokeStyle = "#000";
         ctx.fillStyle = this.color;
 
+        ctx.shadowColor = "#ccc"; //灰色の影を付ける
+        ctx.shadowBlur  = 0;      //ぼかしを０にする
+        ctx.shadowOffsetX = 3;    //横に3pxずらす
+        ctx.shadowOffsetY = 1;    //縦に1pxずらす
+
         var width = ctx.measureText(this.comment).width;
         var overlayWidth = AmazonNico.canvas.width;
         var row = this._InsertGroup(AmazonNico.commentGroup.top);
@@ -190,6 +209,8 @@ class VideoComment{
 
         ctx.strokeText(this.comment, x, y);
         ctx.fillText(this.comment, x, y);
+
+        ctx.globalAlpha = 0.7;
 
         this.position = [x, y];
     }
@@ -215,7 +236,7 @@ class VideoComment{
             }
 
             var tail = group[r][group[r].length - 1];
-            ctx.font = COMMENT_CONFIG.FONT_SIZE + "px 'ＭＳ ゴシック'";
+            ctx.font = COMMENT_CONFIG.FONT_SIZE_PX + "px 'ＭＳ ゴシック'";
             var tailWidth = ctx.measureText(tail.comment).width;
 
             if(tail.position[0] < overlayWidthHalf - tailWidth / 2.0){
@@ -363,7 +384,7 @@ function ShowComment(){
     AmazonNico.canvas.width = overlayWidth;
     AmazonNico.canvas.height = overlayHeight;
     AmazonNico.ctx.clearRect(0, 0, overlayWidth, overlayHeight);
-    COMMENT_CONFIG.FONT_SIZE_PX = Min(overlayWidth, overlayHeight) * COMMENT_CONFIG.FONT_SIZE_RATE;
+    //COMMENT_CONFIG.FONT_SIZE_PX = Min(overlayWidth, overlayHeight) * COMMENT_CONFIG.FONT_SIZE_RATE;
     console.log(COMMENT_CONFIG.FONT_SIZE_PX);
 
     if(!AmazonNico.video){

@@ -34,3 +34,10 @@ https://account.nicovideo.jp/login
 ### 5. Amazon Primeの動画にコメントを表示する
 使い方は下記動画を参照してください。  
 https://www.nicovideo.jp/watch/sm35618213
+
+### フォーク元からの変更点
+
+・AmazonPrime側のプレイヤー要素名が変更されていて動作しなかったのを修正
+・フォントサイズを固定
+・コメントに影を付けて見やすく
+・コメントを半透明化
