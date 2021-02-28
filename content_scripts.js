@@ -298,7 +298,7 @@ function NewComment(request){
 
     if(!AmazonNico.commentOverlay){
         AmazonNico.commentOverlay = $("<canvas>").attr('id', 'comment_overlay');
-        $(".overlaysContainer").append(AmazonNico.commentOverlay);
+        $(".atvwebplayersdk-overlays-container").append(AmazonNico.commentOverlay);
     }
 
     var overlay = document.getElementById('comment_overlay');
@@ -317,7 +317,7 @@ function NewComment(request){
         return a.vpos - b.vpos;
     });
 
-    var videoTimes = $(".time").text().split(" / ");
+    var videoTimes = $(".atvwebplayersdk-timeindicator-text").text().split(" / ");
     var videoTime0 = GetVideoTime(videoTimes[0]);
     var videoTime1 = GetVideoTime(videoTimes[1]);
 
