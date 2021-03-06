@@ -6,13 +6,10 @@ function GetVideoInfo(){
     var videoUrl = $("#video_id").val();
     var pos = videoUrl.lastIndexOf("/");
     if (pos >= 0){
-        videoId = searchTerm.substring( pos + 1);
+        videoId = videoUrl.substring( pos + 1);
     }else{
         videoId = videoUrl;
     }
-    
-    videoId = $("#video_id").val();
-    
     
     
     videoInfo["isUserVideo"] = !!videoId.match("^sm")
