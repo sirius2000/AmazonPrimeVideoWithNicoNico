@@ -22,7 +22,7 @@ var COMMENT_CONFIG = {
     NORMAL_AFTER_TIME: 300,
     BOTTOM_TIME: 300,
     TOP_TIME: 300,
-    FONT_SIZE_RATE: 0.08, // スクリーンサイズ（幅と高さの大きいほう)に対しての比
+    FONT_SIZE_RATE: 0.07, // スクリーンサイズ（幅と高さの大きいほう)に対しての比
     FONT_SIZE_PX: 48, // 実際のフォントサイズ
     ROW_COUNT: 10
 };
@@ -391,8 +391,8 @@ function ShowComment(){
         return;
     }
 
-    // Amazon PrimeのvideoはなぜかcurrentTime=10から始まる
-    var nicoTime = (AmazonNico.video.currentTime - 20) * 100;
+    //
+    var nicoTime = AmazonNico.video.currentTime * 100;
 
     for(var i = 0;i < AmazonNico.comments.length;i++){
         AmazonNico.comments[i].Display(nicoTime);
